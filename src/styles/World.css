@@ -1,0 +1,26 @@
+.World {
+
+}
+h1 {
+    text-align: 'center' !important;
+    overflow-y: scroll;
+}
+.WorldContent {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.container-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+.element {
+    min-width: 300px;
+    margin: 10px;
+    text-align: left;
+}

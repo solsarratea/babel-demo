@@ -1,14 +1,16 @@
+import './styles/World.css';
 import React from 'react';
 import fetchGraphQL from './fetchGraphQL';
 import sortBy from 'lodash/sortBy';
-
+import {Link, useParams} from 'react-router-dom';
 const { useState, useEffect } = React;
+
 
 function Quotes({data}) {
     return (
-        <div>
+        <div className="container-row">
             {data.map(({quote},idx) =>
-                <div key={idx}>
+                <div className="element" key={idx}>
                     {quote}
                 </div>
             )}
@@ -18,18 +20,38 @@ function Quotes({data}) {
 
 function CoocuringCodes ({data}) {
     return (
-        <div>
-            {data.map(({name},idx) =>
-                <div key={idx}>
-                    {name}
-                </div>
+        <div className="container-row">
+            {data.map(({name, annotations_count},idx) => {
+                const size = Math.min(50,annotations_count)+8;
+                const weight = Math.pow(1.1,annotations_count);
+                const color = (weight + Math.pow(16, 6)).toString(16).substr(-6)
+              const style = {
+                  textDecoration: `none`,
+                  color: `#${color}`,
+                  fontSize: size,
+
+                };
+                return(
+                    <div className="element"
+                         key={idx}>
+                        <Link style={style}
+                              onClick={()=>window.href.reload()}
+                              to={`/${name}`}>
+                            {name}
+                        </Link>
+                    </div>)
+            }
             )}
         </div>
 
     );
 }
-function World({name}){
+function World(){
+    const {name} = useParams();
     const [ code , setCode ] = useState(null);
+    const [ count , setCount ] = useState(null);
+    const [ color , setColor ] = useState(null);
+
     const [ quotes, setQuotes ] = useState(null);
     const [ coocurringCodes, setCoocurringCodes ] = useState(null);
 
@@ -59,7 +81,7 @@ function World({name}){
     useEffect(() => {
         let isMounted = true;
         fetchGraphQL(
-            query("Mother")
+            query(name)
         ).then(response => {
                if (!isMounted) {
                 return;
@@ -69,10 +91,14 @@ function World({name}){
             console.log(data)
             var sortedCodes = sortBy(data.cooccurring_codes, "annotations_count").reverse()
             setCode(data.name);
-            setQuotes(data.annotations)
+            setQuotes(data.annotations);
+            setCount(data.annotations_count);
             setCoocurringCodes(sortedCodes);
 
-            window.s = sortedCodes;
+            const weight = Math.pow(1.1,data.annotations_count);
+            const color = (weight + Math.pow(16, 6)).toString(16).substr(-6)
+            console.log(color)
+            setColor(color)
 
 
         }).catch(error => {
@@ -84,17 +110,28 @@ function World({name}){
         };
     }, [fetchGraphQL]);
 
+
     return (
-        <div>
-            <p>
-                {code ? ` ${code}` : "Loading"}
-            </p>
-            {quotes && false ?
-             <Quotes data={ quotes }/>
-             : null }
-            {coocurringCodes ?
-             <CoocuringCodes data={ coocurringCodes }/>
-             : null }
+        <div className="World">
+            {code ?
+             <h1 style={{top: 10, left: 50,
+                     position:'fixed',
+                     color: `#${color}`}}>
+                {`${code}`}
+            </h1>:
+             <p>{"Loading"}</p>
+            }
+            <div className="WorldContent">
+                {quotes ?
+                 <Quotes data={ quotes }/>
+                 : null }
+
+                {coocurringCodes ?
+                 <CoocuringCodes data={ coocurringCodes }/>
+                 : null }
+
+
+            </div>
 
         </div>
     );
