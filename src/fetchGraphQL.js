@@ -1,5 +1,5 @@
 async function fetchGraphQL(query, variables) {
-    const response = await fetch('http://207.154.248.234:4000/graphql', {
+    const response = await fetch('https://207.154.248.234:4000/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
