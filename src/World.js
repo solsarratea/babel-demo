@@ -35,7 +35,6 @@ function CoocuringCodes ({data}) {
                     <div className="element"
                          key={idx}>
                         <Link style={style}
-                              onClick={()=>window.href.reload()}
                               to={`/${name}`}>
                             {name}
                         </Link>
@@ -108,7 +107,7 @@ function World(){
         return () => {
             isMounted = false;
         };
-    }, [fetchGraphQL]);
+    }, [fetchGraphQL, name]);
 
 
     return (
